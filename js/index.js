@@ -34,7 +34,7 @@ var Traj = {
 
 
          //init wavefrom and audio
-         Traj.Player.initAudioFileArea()
+         Traj.Player.initAudioFileArea();
     },
 
     //use to improve the touch speed on mobile devices

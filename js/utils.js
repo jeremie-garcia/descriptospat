@@ -186,6 +186,18 @@ Traj.Utils = {
         }
     },
 
+    //TODO
+    interpolatePourcentage(curve, percentage){
+        listeX = curve.X;
+        listeY = curve.Y;
+
+        for (var i = listeX.length - 1; i >= 0; i--) {
+           // console.log(listeX[i]);
+        }
+
+        return [0,0];
+    },
+
     //returns an array with [x,y,z,t,[alpha,beta,gamma]]
     interpolate : function(now,curve,idx) {
         if(typeof(idx)=="undefined"){

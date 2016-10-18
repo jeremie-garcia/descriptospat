@@ -13,6 +13,11 @@ Traj.Player = {
         
         Traj.Player.isPlaying = true;
 
+        var duree = Traj.Player.wavesurfer.getDuration();
+        console.log(duree);
+
+
+
         Traj.Player.wavesurfer.play();
         // Traj.Player.wavesurfer.seekTo(pourcentage); pour aller entre 0 et 1
 
@@ -24,17 +29,18 @@ Traj.Player = {
 
         //time variables
         var begin = new Date().getTime(),
-        now;
+        now, pourcentage;
 
         (function loopMulti() {
             // get time for new frame
             now = new Date().getTime() - begin;
-           
+            //TODO
+            pourcentage = 0;
 
             // clear dyn canvas
             Traj.View.dyn_repaint();
             //stop if the current time is less than the whole duration
-            if(now > maxDuration){
+            if(now > duree){
                 //if loop mode then relaucnh the palying
                 if (Traj.Player.loopMode) { 
                     
@@ -52,15 +58,15 @@ Traj.Player = {
 
                     var curve = Traj.Manager.trajectories[indexes[k]];
 
-                    //do it only if the curve is not finished.
-                    if(!(now > curve.getDuration())) {
 
-                        var idx = Traj.Utils.findPointIdx(now,curve),
-                        pointCoord = Traj.Utils.interpolate(now,curve,idx),
-                        x = pointCoord[0],
-                        y = pointCoord[1],
-                        z = pointCoord[2],
-                        orientation = pointCoord[4];
+                    pointCoord = Traj.Utils.interpolatePourcentage(curve,pourcentage),
+
+
+
+                    x = pointCoord[0],
+                    y = pointCoord[1],
+                    z = 0,
+                    orientation = ['undefined','undefined','undefined'];
 
                         if (!isNaN(x)&&!isNaN(y)) {
 
@@ -71,7 +77,6 @@ Traj.Player = {
                             Traj.Player.repaintPointWithOrientation(curve,[x,y], orientation); 
                             Traj.Player.repaintCurve(curve,idx,idx-1);
                         }
-                    }
                 }
                 Traj.Player.requestId = requestAnimationFrame(loopMulti);
             }
