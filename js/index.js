@@ -13,10 +13,8 @@ var Traj = {
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
             this.onmobile = true
             this.initFastClick();
-        } else {
-            console.log("Je suis sur une machine");
         }
-
+        
         //Initializations
         Traj.View.initCanvas(); //Drawing
         Traj.Session.initStorage(); //storage
