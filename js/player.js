@@ -142,7 +142,7 @@ Traj.Player = {
         var targetNode = audioContext.destination;
         // HRTF files loading
         for (var i = 0; i < hrtfs.length; i++) {
-            var buffer = audioContext.createBuffer(2, 512, 44100);
+            var buffer = audioContext.createBuffer(2, 512, 48000);
             var bufferChannelLeft = buffer.getChannelData(0);
             var bufferChannelRight = buffer.getChannelData(1);
             for (var e = 0; e < hrtfs[i].fir_coeffs_left.length; e++) {
@@ -172,8 +172,5 @@ Traj.Player = {
         , });
         Traj.Player.wavesurfer.load(Traj.Player.audioFilePath);
         
-        var feature = "energy";
-        var signal = 
-        var beats = Meyda.extract(feature,signal);
     }
 }

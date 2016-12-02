@@ -234,6 +234,8 @@ Traj.Utils = {
         listeX = curve.X;
         listeY = curve.Y;
         
+   ///if curve doensn't exist ..... sinon faire dans le time curved pour trouver la position de pourcentage
+        
         var listePourcentage = [];
         
         var curveLenght = 0;

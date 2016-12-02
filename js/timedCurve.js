@@ -11,6 +11,7 @@ function TimedCurve(source) {
     this.orientation = [];
     this.color = Traj.Utils.getColorSource(source) || Traj.Utils.getColorSource(1);
     this.sourceNumber = source || Number(1);
+    this.listePourcentage;
 }
 
 TimedCurve.prototype.changeSource = function(source) {
