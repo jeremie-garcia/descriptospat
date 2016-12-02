@@ -185,19 +185,107 @@ Traj.Utils = {
             return pointIdx;
         }
     },
-
-    //TODO
-    interpolatePourcentage(curve, percentage){
+    
+      
+    /*  
+    lenghtCurve : function(curve){
         listeX = curve.X;
         listeY = curve.Y;
-
-        for (var i = listeX.length - 1; i >= 0; i--) {
-           // console.log(listeX[i]);
+        
+        var listePourcentage = [];
+            
+        var curveLenght = 0;
+        
+        var taille = listeX.length;
+        
+        var i = 0;
+        
+        for (i = 0; i < taille - 1; i++) {
+        
+            curveLenght += Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2);
+        
         }
-
-        return [0,0];
+        
+    },
+    
+    listeCurvePourcentage : function(curve) {
+        
+        var listePourcentage = [];
+        var localcurveLenght= 0;
+        var positionPourcentage = 0;
+        
+        var curveLenght = lenghtCurve(curve);
+       
+        listePourcentage.push(0);
+       
+        for(var i = 0; i < taille - 1; i++)
+        {
+            localcurveLenght += Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2);
+            positionPourcentage = (localcurveLenght/curveLenght);
+            listePourcentage.push(positionPourcentage);
+        }
+        
+    },
+    */
+    
+    
+    interpolatePourcentage : function(pourcentage,curve){
+        
+        listeX = curve.X;
+        listeY = curve.Y;
+        
+        var listePourcentage = [];
+        
+        var curveLenght = 0;
+        var taille = listeX.length;
+        
+        
+        for (var i = 0; i < taille - 1; i++) {
+            curveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2)); 
+        }
+        
+        listePourcentage.push(0);
+        
+        var localcurveLenght= 0;
+        var positionPourcentage = 0;
+       
+        for(var i = 0; i < taille - 1; i++) {
+            localcurveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2));
+            positionPourcentage = (localcurveLenght/curveLenght);
+            listePourcentage.push(positionPourcentage);
+        }
+              
+        //find the indexes before and after the point
+       
+        for(var i=0;i < taille - 1;i++) {
+            
+            if(pourcentage >= listePourcentage[i]) {
+                
+                var x1 = listeX[i];
+                var x2 = listeX[i+1];
+        
+                var y1 = listeY[i];
+                var y2 = listeY[i+1];
+                var tInterpolation = (pourcentage - listePourcentage[i])/(listePourcentage[i+1] - listePourcentage[i]);
+        
+                var coeffX = x2 - x1;
+                var coeffY = y2 - y1;
+        
+                var x = x1 + tInterpolation * coeffX;
+                var y = y1 + tInterpolation * coeffY;
+                
+                //Calcul de la vitesse instantanée et de la vitesse moyenne du curseur
+                var dureeSon = Traj.Player.wavesurfer.getDuration();
+                var vitesseMoyenne = curveLenght/dureeSon;
+                var vitesse = Math.sqrt(Math.pow(x-x1,2) + Math.pow(y-y1,2))/((pourcentage - listePourcentage[i])*dureeSon);
+                //console.log(vitesse,vitesseMoyenne);
+            }   
+        }
+        
+        return [x,y];
     },
 
+    
     //returns an array with [x,y,z,t,[alpha,beta,gamma]]
     interpolate : function(now,curve,idx) {
         if(typeof(idx)=="undefined"){
