@@ -1,14 +1,14 @@
 Traj.Player = {
-    loopMode: false
-    , requestId: undefined
-    , loopID: undefined
-    , isPlaying: false
-    , audioFilePath: "./snd/Hip_Hop_4_Break.wav"
-    , wavesurfer: undefined
-    , binauralAudio: undefined
-    , binauralFIRNode: undefined, //This methods plays the curves from their indexes
+    loopMode: false,
+    requestId: undefined,
+    loopID: undefined,
+    isPlaying: false,
+    audioFilePath: "./snd/Hip_Hop_4_Break.wav",
+    wavesurfer: undefined,
+    binauralAudio: undefined,
+    binauralPanner: undefined,
     
-    
+     //This methods plays the curves from their indexes
     playCurves: function (indexes) {
         Traj.Player.isPlaying = true;
         //Traj.Player.wavesurfer.play();
@@ -57,30 +57,17 @@ Traj.Player = {
                         , y = pointCoord[1]
                         , z = 0
                         , orientation = ['undefined', 'undefined', 'undefined'];
-                    //console.log(x + " " +y );
                     if (!isNaN(x) && !isNaN(y)) {
-                        //Mise a jour de la position pour la spatialisation ici
-                        //Update the display (paint playHead and curve segment)
+                        var position = [x,y,z];
+                        //console.log(position);
                         Traj.Player.repaintPointWithOrientation(curve, [x, y], orientation);
-                        //conversion x y vers polaire
-                        var distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-                        var azimuth = -Math.atan(y / x) * (180 / Math.PI);
-                        if (x >= 0) {
-                            azimuth = azimuth + 90;
-                        }
-                        else {
-                            azimuth = azimuth - 90;
-                        }
-                        listePolaire.push([azimuth, distance]);
-                        // var distance = 1; //pas sur que ça fonctionne bien...
-                        var elevation = 0;
-                        Traj.Player.binauralFIRNode.setPosition(azimuth, elevation, distance);
+                        Traj.Player.binauralPanner.setSourcePositionByIndex(0,position);
+                        Traj.Player.binauralPanner.update();
                     }
                 }
                 Traj.Player.requestId = requestAnimationFrame(loopMulti);
             }
         }())
-        //console.log(listePolaire);
     }
     , stopPlayActions: function () {
         if (this.isPlaying) {
@@ -88,6 +75,8 @@ Traj.Player = {
                 cancelAnimationFrame(this.requestId);
                 this.requestId = undefined;
             }
+            Traj.Player.binauralAudio.pause();
+            Traj.Player.binauralAudio.currentTime = 0;
             // Traj.View.dyn_repaint();
             Traj.Player.isPlaying = false;
             var playButton = document.getElementById('playButton');
@@ -126,7 +115,8 @@ Traj.Player = {
         Traj.Player.stopPlayActions();
         document.getElementById('playButton').innerHTML = 'Play';
         Traj.View.repaintAll();
-    }, ////////////////////////////////////
+    },
+    ////////////////////////////////////
     ////////// CALLED FROM HTML ////////
     ////////////////////////////////////
     updateLoopMode: function () {
@@ -139,32 +129,31 @@ Traj.Player = {
     }
     , initAudioFileArea: function () {
         var audioContext = new AudioContext();
-        var targetNode = audioContext.destination;
-        // HRTF files loading
-        for (var i = 0; i < hrtfs.length; i++) {
-            var buffer = audioContext.createBuffer(2, 512, 48000);
-            var bufferChannelLeft = buffer.getChannelData(0);
-            var bufferChannelRight = buffer.getChannelData(1);
-            for (var e = 0; e < hrtfs[i].fir_coeffs_left.length; e++) {
-                bufferChannelLeft[e] = hrtfs[i].fir_coeffs_left[e];
-                bufferChannelRight[e] = hrtfs[i].fir_coeffs_right[e];
-            }
-            hrtfs[i].buffer = buffer;
-        }
+        var serverDataBase = new binaural.sofa.ServerDataBase();
+        
+        // Audio Nodes
+        Traj.Player.binauralPanner = new binaural.audio.BinauralPanner({
+             audioContext: audioContext,
+             crossfadeDuration: 0.05, // in seconds
+             coordinateSystem: 'spat4Cartesian', // [x,y,z]
+             sourceCount: 1,
+             sourcePositions: [ [0, 0, 1] ], // initial position
+             distAttenuationExponent: 1,
+         });
+        
         //Create Audio Nodes
         Traj.Player.binauralAudio = new Audio(Traj.Player.audioFilePath);
-        //var mediaElement = document.getElementById('source');
         var player = audioContext.createMediaElementSource(Traj.Player.binauralAudio);
-        Traj.Player.binauralFIRNode = new BinauralFIR({
-            audioContext: audioContext
-        });
+      
+        Traj.Player.binauralPanner.connectInputByIndex(0, player);
+        Traj.Player.binauralPanner.connectOutputs(audioContext.destination);
+        
         //Set HRTF dataset
-        Traj.Player.binauralFIRNode.HRTFDataset = hrtfs;
-        //Connect Audio Nodes
-        player.connect(Traj.Player.binauralFIRNode.input);
-        Traj.Player.binauralFIRNode.connect(targetNode);
-        Traj.Player.binauralFIRNode.setPosition(0, 0, 1);
-        //
+        var hrtfUrl = "./libs/hrtf/IRC_1147_C_HRIR_M_44100.sofa.json";
+        Traj.Player.binauralPanner.loadHrtfSet(hrtfUrl);
+        Traj.Player.binauralPanner.setSourcePositionByIndex(0,[0, 1, 0]);
+        
+        // Create wave form wisualization
         Traj.Player.wavesurfer = WaveSurfer.create({
             container: '#waveform'
             , waveColor: 'violet'
