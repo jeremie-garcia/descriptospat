@@ -186,55 +186,13 @@ Traj.Utils = {
         }
     },
     
-      
-    /*  
-    lenghtCurve : function(curve){
-        listeX = curve.X;
-        listeY = curve.Y;
-        
-        var listePourcentage = [];
-            
-        var curveLenght = 0;
-        
-        var taille = listeX.length;
-        
-        var i = 0;
-        
-        for (i = 0; i < taille - 1; i++) {
-        
-            curveLenght += Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2);
-        
-        }
-        
-    },
-    
-    listeCurvePourcentage : function(curve) {
-        
-        var listePourcentage = [];
-        var localcurveLenght= 0;
-        var positionPourcentage = 0;
-        
-        var curveLenght = lenghtCurve(curve);
-       
-        listePourcentage.push(0);
-       
-        for(var i = 0; i < taille - 1; i++)
-        {
-            localcurveLenght += Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2);
-            positionPourcentage = (localcurveLenght/curveLenght);
-            listePourcentage.push(positionPourcentage);
-        }
-        
-    },
-    */
-    
-    
-    interpolatePourcentage : function(pourcentage,curve){
+    interpolatePourcentage : function(pourcentage, curve){
         
         listeX = curve.X;
         listeY = curve.Y;
-        
-   ///if curve doensn't exist ..... sinon faire dans le time curved pour trouver la position de pourcentage
+    
+        var dureeSon = Traj.Player.wavesurfer.getDuration();
+        var beatsTime = [0,250,500,800,1800,dureeSon*1000];
         
         var listePourcentage = [];
         
@@ -246,6 +204,95 @@ Traj.Utils = {
             curveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2)); 
         }
         
+        var localcurveLenght= 0;
+        var positionPourcentage = 0;
+       
+        for(var i = 0; i < taille - 1; i++) {
+            localcurveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2));
+            positionPourcentage = (localcurveLenght/curveLenght);
+            listePourcentage.push(positionPourcentage);
+        }
+
+        var vitesseMoyenne = curveLenght/dureeSon;
+        var beatsTimePourcentage = []
+        
+        for (var i=0; i <= 5;i++) {
+            var positionBeat = beatsTime[i]*vitesseMoyenne/1000;
+            var positionPourcentageBeat = positionBeat/curveLenght;
+            beatsTimePourcentage.push(positionPourcentageBeat);
+        }
+        
+		listeIndex = [];
+		listeIndex.push(0);
+        for(var j=1; j<=4; j++) {
+				while(listePourcentage[i] < beatsTimePourcentage[j] && i<=taille-1) {
+					i++;
+				}
+				listeIndex.push(i);
+		}
+
+ /*
+        var k=0;
+        var i=0;
+        console.log(taille);
+        for (var j=0; j<=5; j++) {
+            while(listePourcentage[i] < beatsTimePourcentage[j]) {
+                var x = listeX[k];
+                var y = listeY[k];
+                i++;
+                console.log('k',k,'x',x,'y',y);
+            }
+            k+=i;
+        }
+           
+   /*
+        var k=0;
+        
+        console.log(taille);
+        for (var j=0; j<=5; j++) {
+            for(var i=0; i<=taille-1;i++) {
+                while(listePourcentage[i] < beatsTimePourcentage[j]) {
+                    var x = listeX[k];
+                    var y = listeY[k];
+                    i++;
+                    console.log('k',k,'x',x,'y',y);
+                }
+                k+=i;
+            }
+        }  
+        */
+		
+        for (var j=1; j<=5; j++) {
+            if (pourcentage < beatsTimePourcentage[j]) {
+                var x = listeX[listeIndex[j-1]];
+                var y = listeY[listeIndex[j-1]];
+				console.log('x',x,'y',y,listeIndex[j-1]);
+            }
+        }  
+        
+    	return[x,y];
+    },
+   
+	
+	
+	/*
+    interpolatePourcentage : function(pourcentage,curve){
+        
+        listeX = curve.X;
+        listeY = curve.Y;
+    
+   ///if curve doensn't exist ..... sinon faire dans le time curved pour trouver la position de pourcentage
+        
+        var listePourcentage = [];
+        
+        var curveLenght = 0;
+        var taille = listeX.length;
+        
+        
+        for (var i = 0; i < taille - 1; i++) {
+            curveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2)); 
+        }
+
         listePourcentage.push(0);
         
         var localcurveLenght= 0;
@@ -285,7 +332,7 @@ Traj.Utils = {
         }
         
         return [x,y];
-    },
+    },*/
 
     
     //returns an array with [x,y,z,t,[alpha,beta,gamma]]
