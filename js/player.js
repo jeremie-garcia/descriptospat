@@ -7,7 +7,7 @@ Traj.Player = {
     wavesurfer: undefined,
     binauralAudio: undefined,
     binauralPanner: undefined,
-    beatsTimes : [0,250,500,800,1200],
+    beatsTimes : [0,250,500,800,1200,1800],
     //tempo : 123,
     
      //This methods plays the curves from their indexes

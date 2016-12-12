@@ -192,8 +192,13 @@ Traj.Utils = {
         listeY = curve.Y;
     
         var dureeSon = Traj.Player.wavesurfer.getDuration();
-        var beatsTime = [0,250,500,800,1800,dureeSon*1000];
-        
+		
+		var beatsTimes = [0,150,500,760,1100,1500,2000];
+		
+		if (beatsTimes[-1] != dureeSon) {
+			beatsTimes.push(dureeSon*1000);
+		}
+		
         var listePourcentage = [];
         
         var curveLenght = 0;
@@ -212,69 +217,34 @@ Traj.Utils = {
             positionPourcentage = (localcurveLenght/curveLenght);
             listePourcentage.push(positionPourcentage);
         }
-
+	
         var vitesseMoyenne = curveLenght/dureeSon;
-        var beatsTimePourcentage = []
+        var beatsTimesPourcentage = []
         
-        for (var i=0; i <= 5;i++) {
-            var positionBeat = beatsTime[i]*vitesseMoyenne/1000;
+        for (var i=0; i <= beatsTimes.length - 1;i++) {
+            var positionBeat = beatsTimes[i]*vitesseMoyenne/1000;
             var positionPourcentageBeat = positionBeat/curveLenght;
-            beatsTimePourcentage.push(positionPourcentageBeat);
+            beatsTimesPourcentage.push(positionPourcentageBeat);
         }
         
 		listeIndex = [];
 		listeIndex.push(0);
-        for(var j=1; j<=4; j++) {
-				while(listePourcentage[i] < beatsTimePourcentage[j] && i<=taille-1) {
+        for(var j=1; j<=beatsTimes.length - 2; j++) {
+				while(listePourcentage[i] < beatsTimesPourcentage[j] && i<=taille-1) {
 					i++;
 				}
 				listeIndex.push(i);
 		}
 
- /*
-        var k=0;
-        var i=0;
-        console.log(taille);
-        for (var j=0; j<=5; j++) {
-            while(listePourcentage[i] < beatsTimePourcentage[j]) {
-                var x = listeX[k];
-                var y = listeY[k];
-                i++;
-                console.log('k',k,'x',x,'y',y);
-            }
-            k+=i;
-        }
-           
-   /*
-        var k=0;
-        
-        console.log(taille);
-        for (var j=0; j<=5; j++) {
-            for(var i=0; i<=taille-1;i++) {
-                while(listePourcentage[i] < beatsTimePourcentage[j]) {
-                    var x = listeX[k];
-                    var y = listeY[k];
-                    i++;
-                    console.log('k',k,'x',x,'y',y);
-                }
-                k+=i;
-            }
-        }  
-        */
-		
-        for (var j=1; j<=5; j++) {
-            if (pourcentage < beatsTimePourcentage[j]) {
+        for (var j=1; j<=beatsTimes.length - 1; j++) {
+            if (pourcentage < beatsTimesPourcentage[j] && pourcentage >= beatsTimesPourcentage[j-1]) {
                 var x = listeX[listeIndex[j-1]];
                 var y = listeY[listeIndex[j-1]];
-				console.log('x',x,'y',y,listeIndex[j-1]);
             }
         }  
-        
     	return[x,y];
     },
    
-	
-	
 	/*
     interpolatePourcentage : function(pourcentage,curve){
         
@@ -322,7 +292,7 @@ Traj.Utils = {
         
                 var x = x1 + tInterpolation * coeffX;
                 var y = y1 + tInterpolation * coeffY;
-                
+                //console.log('x',x,'y',y);
                 //Calcul de la vitesse instantanée et de la vitesse moyenne du curseur
                 var dureeSon = Traj.Player.wavesurfer.getDuration();
                 var vitesseMoyenne = curveLenght/dureeSon;
@@ -332,8 +302,8 @@ Traj.Utils = {
         }
         
         return [x,y];
-    },*/
-
+    },
+*/
     
     //returns an array with [x,y,z,t,[alpha,beta,gamma]]
     interpolate : function(now,curve,idx) {
