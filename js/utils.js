@@ -218,6 +218,7 @@ Traj.Utils = {
             localcurveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2));
             positionPourcentage = (localcurveLenght/curveLenght);
             listePourcentage.push(positionPourcentage);
+			console.log(positionPourcentage);
         }
 	
         var vitesseMoyenne = curveLenght/dureeSon;
@@ -226,16 +227,19 @@ Traj.Utils = {
         for (var i=0; i <= beatsTimes.length - 1;i++) {
             var positionBeat = beatsTimes[i]*vitesseMoyenne/1000;
             var positionPourcentageBeat = positionBeat/curveLenght;
+			console.log(positionPourcentageBeat);
             beatsTimesPourcentage.push(positionPourcentageBeat);
         }
         
 		listeIndex = [];
 		listeIndex.push(0);
-        for(var j=1; j<=beatsTimes.length - 2; j++) {
+		var i = 0;
+        for(var j=1; j<=beatsTimes.length - 1; j++) {
 				while(listePourcentage[i] < beatsTimesPourcentage[j] && i<=taille-1) {
 					i++;
 				}
 				listeIndex.push(i);
+			console.log(i);
 		}
 
         for (var j=1; j<=beatsTimes.length - 1; j++) {
@@ -305,8 +309,8 @@ Traj.Utils = {
         
         return [x,y];
     },
-*/
-    
+
+    */
     //returns an array with [x,y,z,t,[alpha,beta,gamma]]
     interpolate : function(now,curve,idx) {
         if(typeof(idx)=="undefined"){
