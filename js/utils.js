@@ -193,7 +193,9 @@ Traj.Utils = {
     
         var dureeSon = Traj.Player.wavesurfer.getDuration();
 		
-		var beatsTimes = [0,150,500,760,1100,1500,2000];
+        //Estimated time for beats in file HIPHOP break 4
+        //not working anymore...
+		var beatsTimes = [0,300,460,600,770,900,1060,1200,1370, 1500, 1660, 1800, 1960, 2090, 2210, 2270];
 		
 		if (beatsTimes[-1] != dureeSon) {
 			beatsTimes.push(dureeSon*1000);
