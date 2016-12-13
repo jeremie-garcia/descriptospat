@@ -12,6 +12,7 @@ function TimedCurve(source) {
     this.color = Traj.Utils.getColorSource(source) || Traj.Utils.getColorSource(1);
     this.sourceNumber = source || Number(1);
     this.listePourcentage;
+	this.curveLenght = 0;
 }
 
 TimedCurve.prototype.changeSource = function(source) {
@@ -21,7 +22,11 @@ TimedCurve.prototype.changeSource = function(source) {
 
 // write points into currentCurve object
 TimedCurve.prototype.addTimedPoint = function (x, y, z, t) {
-    this.X.push(x);
+	var i=0;
+	if (t > 0) {
+		this.curveLenght += Math.sqrt(Math.pow(x - this.X[i],2) + Math.pow(y - this.Y[i],2));
+	}
+	this.X.push(x);
     this.Y.push(y);
     this.Z.push(z);
     this.t.push(Math.floor(t))

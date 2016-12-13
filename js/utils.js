@@ -185,8 +185,9 @@ Traj.Utils = {
             return pointIdx;
         }
     },
-    
-    interpolatePourcentage : function(pourcentage, curve){
+   
+	//method that finds the nearesst point from the current position, in a discreet database
+    interpolateMarker : function(pourcentage, curve){
         
         listeX = curve.X;
         listeY = curve.Y;
@@ -195,10 +196,10 @@ Traj.Utils = {
 		
         //Estimated time for beats in file HIPHOP break 4
         //not working anymore...
-		var beatsTimes = [0,300,460,600,770,900,1060,1200,1370, 1500, 1660, 1800, 1960, 2090, 2210, 2270];
+		var markers = Traj.Player.markers;
 		
-		if (beatsTimes[-1] != dureeSon) {
-			beatsTimes.push(dureeSon*1000);
+		if (markers[-1] != dureeSon) {
+			markers.push(dureeSon*1000);
 		}
 		
         var listePourcentage = [];
@@ -218,32 +219,29 @@ Traj.Utils = {
             localcurveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2));
             positionPourcentage = (localcurveLenght/curveLenght);
             listePourcentage.push(positionPourcentage);
-			console.log(positionPourcentage);
         }
 	
         var vitesseMoyenne = curveLenght/dureeSon;
-        var beatsTimesPourcentage = []
+        var markersPourcentage = []
         
-        for (var i=0; i <= beatsTimes.length - 1;i++) {
-            var positionBeat = beatsTimes[i]*vitesseMoyenne/1000;
-            var positionPourcentageBeat = positionBeat/curveLenght;
-			console.log(positionPourcentageBeat);
-            beatsTimesPourcentage.push(positionPourcentageBeat);
+        for (var i=0; i <= markers.length - 1;i++) {
+            var positionMarker = markers[i]*vitesseMoyenne/1000;
+            var positionPourcentageMarker = positionMarker/curveLenght;
+            markersPourcentage.push(positionPourcentageMarker);
         }
         
 		listeIndex = [];
 		listeIndex.push(0);
 		var i = 0;
-        for(var j=1; j<=beatsTimes.length - 1; j++) {
-				while(listePourcentage[i] < beatsTimesPourcentage[j] && i<=taille-1) {
+        for(var j=1; j<=markers.length - 1; j++) {
+				while(listePourcentage[i] < markersPourcentage[j] && i<=taille-1) {
 					i++;
 				}
 				listeIndex.push(i);
-			console.log(i);
 		}
 
-        for (var j=1; j<=beatsTimes.length - 1; j++) {
-            if (pourcentage < beatsTimesPourcentage[j] && pourcentage >= beatsTimesPourcentage[j-1]) {
+        for (var j=1; j<=markers.length - 1; j++) {
+            if (pourcentage < markersPourcentage[j] && pourcentage >= markersPourcentage[j-1]) {
                 var x = listeX[listeIndex[j-1]];
                 var y = listeY[listeIndex[j-1]];
             }
@@ -251,7 +249,7 @@ Traj.Utils = {
     	return[x,y];
     },
    
-	/*
+	
     interpolatePourcentage : function(pourcentage,curve){
         
         listeX = curve.X;
@@ -310,7 +308,7 @@ Traj.Utils = {
         return [x,y];
     },
 
-    */
+    
     //returns an array with [x,y,z,t,[alpha,beta,gamma]]
     interpolate : function(now,curve,idx) {
         if(typeof(idx)=="undefined"){
