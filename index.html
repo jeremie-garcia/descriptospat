@@ -51,6 +51,7 @@
             <div data-role="controlgroup" data-type="horizontal"> <a onClick="javascript:Traj.View.setCanvasZoom(1/1.2);" data-role="button" data-theme="a" data-inline="true" style="background: rgba(250, 250, 250, 0.7);"> - </a> <a onClick="javascript:Traj.View.setCanvasZoom(1.2);" data-role="button" data-theme="a" data-inline="true" style="background: rgba(250, 250, 250, 0.7);"> + </a> </div>
             <div data-role="controlgroup" data-type="vertical">
                 <div style="height:20px"> </div> <a id="playButton" data-role="button" data-theme="a" style="background: rgba(250, 250, 250, 0.8); padding: 5px; width:50px; height:30px; line-height: 30px;">Play</a> </div>
+				<div style="height:20px"> </div> <a id="continu" data-role="button" data-theme="a" style="background: rgba(250, 250, 250, 0.8); padding: 5px; width:80px; height:30px; line-height: 30px;" class="ui-link ui-btn ui-btn-a ui-shadow ui-corner-all ui-first-child ui-last-child" role="button">Continu</a>
         </div>
         <div class="canvas-waveform-overlay" id="waveform"> </div>
         <div id=footer data-role="footer">
@@ -67,6 +68,21 @@
                 Traj.initialize();
                 $.mobile.loading().hide();
             });
+			
+			var continu = document.getElementById('continu');
+			var i = 0;
+			continu.addEventListener('click', function(e) {
+				i++;
+				if (i%2 == 1) {
+					e.target.innerHTML = 'Markers';
+					Traj.Player.continu = false;
+				}
+				else {
+					e.target.innerHTML = 'Continu';
+					Traj.Player.continu = true;
+				}
+			});
+			
         </script>
 </body>
 

@@ -8,7 +8,7 @@ Traj.Player = {
     binauralAudio: undefined,
     binauralPanner: undefined,
     markers : [0,300,460,600,770,900,1060,1200,1370, 1500, 1660, 1800, 1960, 2090, 2210, 2270],
-	continu : false,
+	continu : true,
     
     //This methods plays the curves from their indexes
     playCurves: function (indexes) {
