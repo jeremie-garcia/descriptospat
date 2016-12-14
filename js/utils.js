@@ -186,35 +186,29 @@ Traj.Utils = {
         }
     },
    
-	//method that finds the nearesst point from the current position, in a discreet database
+	//method that finds the nearest point from the current position, in a stepped database.
+	//by an interpolation, the audio source moves on each beat of the audio file.
     interpolateMarker : function(pourcentage, curve){
         
         listeX = curve.X;
         listeY = curve.Y;
     
         var dureeSon = Traj.Player.wavesurfer.getDuration();
-		
-        //Estimated time for beats in file HIPHOP break 4
-        //not working anymore...
 		var markers = Traj.Player.markers;
 		
 		if (markers[-1] != dureeSon) {
 			markers.push(dureeSon*1000);
 		}
 		
-        var listePourcentage = [];
-        
-        var curveLenght = 0;
-        var taille = listeX.length;
-        
-        
-        for (var i = 0; i < taille - 1; i++) {
-            curveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2)); 
-        }
-        
+        var curveLenght = curve.curveLenght;
+		var taille = listeX.length;
         var localcurveLenght= 0;
         var positionPourcentage = 0;
+		
+		var listePourcentage = [];
+		listePourcentage.push(0);
        
+		//build the relative position of each point on the trajectory.
         for(var i = 0; i < taille - 1; i++) {
             localcurveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2));
             positionPourcentage = (localcurveLenght/curveLenght);
@@ -224,6 +218,7 @@ Traj.Utils = {
         var vitesseMoyenne = curveLenght/dureeSon;
         var markersPourcentage = []
         
+		//build the list indicating the nearest trajectory's point from each beat of the sound.
         for (var i=0; i <= markers.length - 1;i++) {
             var positionMarker = markers[i]*vitesseMoyenne/1000;
             var positionPourcentageMarker = positionMarker/curveLenght;
@@ -249,37 +244,29 @@ Traj.Utils = {
     	return[x,y];
     },
    
-	
+	//method that finds the nearest point from the current position, in a continuous database.
+	//the audio cursor moves at a constant speed on the drawn trajectory 
     interpolatePourcentage : function(pourcentage,curve){
         
         listeX = curve.X;
         listeY = curve.Y;
-    
-   ///if curve doensn't exist ..... sinon faire dans le time curved pour trouver la position de pourcentage
         
-        var listePourcentage = [];
-        
-        var curveLenght = 0;
+        var curveLenght = curve.curveLenght;
         var taille = listeX.length;
-        
-        
-        for (var i = 0; i < taille - 1; i++) {
-            curveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2)); 
-        }
-
-        listePourcentage.push(0);
-        
         var localcurveLenght= 0;
         var positionPourcentage = 0;
+		
+        var listePourcentage = [];
+		listePourcentage.push(0);
        
-        for(var i = 0; i < taille - 1; i++) {
+        //build the relative position of each point on the trajectory.
+		for(var i = 0; i < taille - 1; i++) {
             localcurveLenght += Math.sqrt(Math.pow(listeX[i+1] - listeX[i],2) + Math.pow(listeY[i+1] - listeY[i],2));
             positionPourcentage = (localcurveLenght/curveLenght);
             listePourcentage.push(positionPourcentage);
-        }
-              
-        //find the indexes before and after the point
-       
+        } 
+        
+		//find the indexes before and after the point
         for(var i=0;i < taille - 1;i++) {
             
             if(pourcentage >= listePourcentage[i]) {
@@ -296,12 +283,6 @@ Traj.Utils = {
         
                 var x = x1 + tInterpolation * coeffX;
                 var y = y1 + tInterpolation * coeffY;
-                //console.log('x',x,'y',y);
-                //Calcul de la vitesse instantanée et de la vitesse moyenne du curseur
-                var dureeSon = Traj.Player.wavesurfer.getDuration();
-                var vitesseMoyenne = curveLenght/dureeSon;
-                var vitesse = Math.sqrt(Math.pow(x-x1,2) + Math.pow(y-y1,2))/((pourcentage - listePourcentage[i])*dureeSon);
-                //console.log(vitesse,vitesseMoyenne);
             }   
         }
         

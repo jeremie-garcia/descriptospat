@@ -9,9 +9,8 @@ Traj.Player = {
     binauralPanner: undefined,
     markers : [0,300,460,600,770,900,1060,1200,1370, 1500, 1660, 1800, 1960, 2090, 2210, 2270],
 	continu : false,
-    //tempo : 123,
     
-     //This methods plays the curves from their indexes
+    //This methods plays the curves from their indexes
     playCurves: function (indexes) {
         Traj.Player.isPlaying = true;
         //Traj.Player.wavesurfer.play();
@@ -56,19 +55,15 @@ Traj.Player = {
                     //do it only if the curve is not finished.  
                     //var idx = Traj.Utils.findPointIdx(now,curve),
                     if (Traj.Player.continu) {
-						var pointCoord = Traj.Utils.interpolatePourcentage(pourcentage, curve)
-                        	, x = pointCoord[0]
-                        	, y = pointCoord[1]
-                        	, z = 0
-                        	, orientation = ['undefined', 'undefined', 'undefined'];
+						var pointCoord = Traj.Utils.interpolatePourcentage(pourcentage, curve);
 					}
 					else {
-						var pointCoord = Traj.Utils.interpolateMarker(pourcentage, curve)
-                        	, x = pointCoord[0]
-                        	, y = pointCoord[1]
-                        	, z = 0
-                        	, orientation = ['undefined', 'undefined', 'undefined'];
+						var pointCoord = Traj.Utils.interpolateMarker(pourcentage, curve);
 					}
+					var x = pointCoord[0]
+                    , y = pointCoord[1]
+                    , z = 0
+                    , orientation = ['undefined', 'undefined', 'undefined'];
                     if (!isNaN(x) && !isNaN(y)) {
                         var position = [x,y,z];
                         //console.log(position);

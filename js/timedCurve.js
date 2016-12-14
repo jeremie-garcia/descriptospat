@@ -13,6 +13,7 @@ function TimedCurve(source) {
     this.sourceNumber = source || Number(1);
     this.listePourcentage;
 	this.curveLenght = 0;
+	this.i = 0;
 }
 
 TimedCurve.prototype.changeSource = function(source) {
@@ -22,9 +23,9 @@ TimedCurve.prototype.changeSource = function(source) {
 
 // write points into currentCurve object
 TimedCurve.prototype.addTimedPoint = function (x, y, z, t) {
-	var i=0;
 	if (t > 0) {
-		this.curveLenght += Math.sqrt(Math.pow(x - this.X[i],2) + Math.pow(y - this.Y[i],2));
+		this.curveLenght += Math.sqrt(Math.pow(x - this.X[this.i],2) + Math.pow(y - this.Y[this.i],2));
+		this.i++;
 	}
 	this.X.push(x);
     this.Y.push(y);
@@ -35,7 +36,11 @@ TimedCurve.prototype.addTimedPoint = function (x, y, z, t) {
 
 // write points into currentCurve object
 TimedCurve.prototype.addOrientedTimedPoint = function (x, y, z, t, orientation) {
-    this.X.push(x);
+	if (t > 0) {
+		this.curveLenght += Math.sqrt(Math.pow(x - this.X[this.i],2) + Math.pow(y - this.Y[this.i],2));
+		this.i++;
+	}
+	this.X.push(x);
     this.Y.push(y);
     this.Z.push(z);
     this.t.push(Math.floor(t));
